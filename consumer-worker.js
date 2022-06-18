@@ -8,19 +8,15 @@ await client.connect();
 var logsQueue = new Queue("logs", client);
 
 function logMessages() {
-    logsQueue.pop(function(err, replies) {
-        var queueName = replies[0];
-        var message = replies[1];
-        console.log("[consumer] Got log: " + message);
+    logsQueue.pop().then(function(res) {
+        console.log("[consumer] Got log: " + res['key'] + " > " + res['element']);
 
-        logsQueue.size(function(err, size) {
+        logsQueue.size().then(function(size) {
             console.log(size + " logs left");
         });
 
         logMessages();
-    });
+    })
 }
 
 logMessages();
-
-client.quit();
